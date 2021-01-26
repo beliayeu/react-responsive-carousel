@@ -22,6 +22,7 @@ export interface Props {
     centerSlidePercentage: number;
     children?: React.ReactChild[];
     className?: string;
+    direction: 'ltr' | 'rtl';
     dynamicHeight?: boolean;
     emulateTouch?: boolean;
     infiniteLoop?: boolean;
@@ -88,6 +89,7 @@ export default class Carousel extends React.Component<Props, State> {
     static defaultProps = {
         axis: 'horizontal',
         centerSlidePercentage: 80,
+        direction: 'ltr',
         interval: 3000,
         labels: {
             leftArrow: 'previous slide / item',
@@ -547,7 +549,7 @@ export default class Carousel extends React.Component<Props, State> {
             return currentPosition;
         }
 
-        return -index * 100;
+        return this.isLtr() ? -index * 100 : index * 100;
     }
 
     setPosition = (position: number, forceReflow?: boolean) => {
@@ -643,11 +645,11 @@ export default class Carousel extends React.Component<Props, State> {
     };
 
     onClickNext = () => {
-        this.increment(1, false);
+        this.increment(this.isLtr() ? 1 : -1, false);
     };
 
     onClickPrev = () => {
-        this.decrement(1, false);
+        this.decrement(this.isLtr() ? 1 : -1, false);
     };
 
     onSwipeForward = () => {
@@ -703,6 +705,10 @@ export default class Carousel extends React.Component<Props, State> {
         }
 
         return null;
+    };
+
+    isLtr = () => {
+        return this.props.direction === 'ltr';
     };
 
     renderItems(isClone?: boolean) {
